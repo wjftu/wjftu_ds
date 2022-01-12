@@ -1,0 +1,30 @@
+name: deploy_to_gh
+on: [push]
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      # I don't know why this do not work
+      # - uses: actions/setup-node@v2
+      #   with:
+      #     node-version: 16.x
+      #     cache: yarn
+      # - name: Build website
+      #   working-directory: website
+      #   run: |
+      #     yarn install --frozen-lockfile
+      #     yarn run build
+      
+      - name: Build
+        uses: wjftu/vuepress_1.x_compiler@master
+        env:
+          SOURCE_DIR: /
+          BUILD_SCRIPT: yarn install --frozen-lockfile && yarn run build
+      - name: Deploy
+        uses: wjftu/git_push_action@master
+        env:
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          TARGET_REPO: wjftu/wjftu.github.io
+          TARGET_BRANCH: master
+          SOURCE_DIR: build
