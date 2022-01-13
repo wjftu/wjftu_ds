@@ -5,7 +5,7 @@ slag: note
 
 # 笔记
 
-这是我的笔记
+我的笔记
 
 * [算法刷题](/note/algorithmPractice)  
 * [设计模式](/note/designPattern)

@@ -35,3 +35,48 @@ class Solution {
     }
 }
 ~~~
+
+### [160 Intersection of Two Linked Lists](160)
+
+Given the heads of two singly linked-lists headA and headB, return the node at which the two lists intersect. If the two linked lists have no intersection at all, return null.
+
+```java
+public class Solution {
+    public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
+        ListNode p1=headA, p2=headB;
+        int count=0;
+        while(p1 != p2){
+            if(p1.next==null){
+                p1=headB;
+                ++count;
+                if(count>1) return null;
+            } else {
+                p1=p1.next;
+            }
+            p2=p2.next!=null? p2.next:headA;
+        }
+        return p1;
+    }
+}
+```
+
+### [206 Reverse Linked List](206)
+
+Given the head of a singly linked list, reverse the list, and return the reversed list.
+
+
+```java
+class Solution {
+    public ListNode reverseList(ListNode head) {
+        ListNode h = new ListNode();
+        ListNode t;
+        while(head != null){
+            t=head.next;
+            head.next=h.next;
+            h.next=head;
+            head=t;
+        }
+        return h.next;
+    }
+}
+```
