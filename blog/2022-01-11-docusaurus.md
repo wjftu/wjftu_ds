@@ -23,7 +23,7 @@ npx create-docusaurus@latest website classic
 
 文件结构
 
-···
+```
 my-website
 ├── blog
 │   ├── 2019-05-28-hola.md
@@ -47,13 +47,38 @@ my-website
 ├── README.md
 ├── sidebars.js
 └── yarn.lock
-···
+```
 
 Docusaurus 有 3 种页面类型，分别是博客、文档、普通页面。默认配置下 blog 文件夹存放的是博客页面；docs 文件夹存放的是文档； src/pages 为普通页面；docusaurus.config.js 存放配置；static 存放静态资源，会生成在页面根目录下；sidebars.js 是默认侧边栏，被 docusaurus.config.js 引用。
 
 使用 `yarn start` 命令可以预览网站
 
+### 配置
+
 docusaurus.config.js 文件可以配置导航栏、站点信息、插件，等等。
+
+```
+const config = {
+  title: '健峰的网站',
+  url: 'https://wjftu.com',
+  baseUrl: '/',
+  onBrokenLinks: 'throw',
+  onBrokenMarkdownLinks: 'warn',
+  favicon: 'img/favicon.ico',
+...
+```
+
+代码高亮可以在 themeConfig 里面配置，非默认支持的语言通过 additionalLanguages 配置。
+```
+const lightCodeTheme = require('prism-react-renderer/themes/github');
+const darkCodeTheme = require('prism-react-renderer/themes/dracula');
+...
+prism: {
+        theme: lightCodeTheme,
+        darkTheme: darkCodeTheme,
+        additionalLanguages: ['java'],
+      },
+```
 
 ### 普通页面
 

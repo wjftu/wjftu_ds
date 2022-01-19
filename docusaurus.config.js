@@ -36,7 +36,15 @@ const config = {
         sidebarPath: require.resolve('./sidebars.js'),
       }, 
     ],
-
+    [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'docker',
+        path: 'note/docker',
+        routeBasePath: 'note/docker',
+        sidebarPath: require.resolve('./sidebars.js'),
+      }, 
+    ],
   ],
 
   presets: [
@@ -100,8 +108,16 @@ const config = {
             title: 'Docs',
             items: [
               {
-                label: 'Note',
-                to: '/note',
+                label: 'Algorithm',
+                to: '/note/algorithmPractice',
+              },
+              {
+                label: 'Design Pattern',
+                to: '/note/designPattern',
+              },
+              {
+                label: 'Docker',
+                to: '/note/docker',
               },
             ],
           },
