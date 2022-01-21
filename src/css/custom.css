@@ -26,3 +26,11 @@
 html[data-theme='dark'] .docusaurus-highlight-code-line {
   background-color: rgba(0, 0, 0, 0.3);
 }
+
+
+pre code {
+  border-style: solid;
+  border-width: 1px;
+  border-color:rgb(146, 224, 208);
+  /* background-color: #CCFF9966; */
+}

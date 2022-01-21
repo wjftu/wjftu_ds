@@ -38,6 +38,8 @@ docker run [OPTIONS] IMAGE [COMMAND] [ARG...]
 `-i, --interactive` 交互运行  
 `--network` 网络模式，默认 --network=bridge  
 `--name` 指定名字  
+`-m, --memory` 限制内存，默认 swap 和内存一样  
+`-c, --cpu-shares` 设置 cpu 相对权重  
 
 常用 `-it` 来进入容器 
 
