@@ -11,7 +11,7 @@ function HomepageHeader() {
   return (
     <header className={clsx('hero hero--primary', styles.heroBanner)}>
       <div className="container">
-        <h1 className="hero__title">健峰的网站</h1>
+        <h1 className="hero__title">健峰的小网站</h1>
         <p className="hero__subtitle">写写笔记，记录一下生活</p>
         {/* <div className={styles.buttons}>
           <Link
@@ -30,7 +30,7 @@ export default function Home() {
   return (
     <Layout
       title={'健峰的网站'}
-      description="Description will go into a meta tag in <head />">
+      description="一个平平凡凡程序员的小网站，分享学习笔记和生活">
       <HomepageHeader />
       <main>
         <HomepageFeatures />
