@@ -12,6 +12,7 @@ sidebar_position: 3
 
 最下层是 Linux Kernel(bootfs)，然后上面是 Base Image，如 Ubuntu, Centos (rootfs)，然后上面是一层一层的 Image。各种不同的 Base Image 会共享主机的 bootfs。 
 
+如果
 
 ### 搜索镜像
 

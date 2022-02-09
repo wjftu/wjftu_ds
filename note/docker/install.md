@@ -119,3 +119,7 @@ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o 
 ```
 
 
+### 文件系统
+
+默认情况下 docker 相关的文件存放在 `/var/lib/docker` 目录下，与 container 相关的文件存放在 containers 文件夹，与 image 相关的文件存放在 image 文件夹，与 volume 相关的文件存放在 volumes 文件夹
+

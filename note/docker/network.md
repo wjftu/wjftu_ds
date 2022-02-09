@@ -107,3 +107,9 @@ root@ubuntu:~# docker inspect bridge
         },
 ...
 ```
+
+创建一个 bridge 网络示例
+
+```
+docker network create --driver bridge --subnet 182.18.0.0/12 custom-isolated-network
+```
