@@ -50,7 +50,7 @@ const config = {
       {
         id: 'springboot',
         path: 'note/springboot',
-        routeBasePath: 'note/docker',
+        routeBasePath: 'note/springboot',
         sidebarPath: require.resolve('./sidebars.js'),
       }, 
     ],
