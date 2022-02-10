@@ -39,3 +39,4 @@ CURRENT 是最新稳定版。GA 是发布版本，是稳定版本。 SNAPSHOT �
 有多种方式可以创建 Spring Boot 项目，可以是普通的 Maven 或 Gradle 项目，也可以用 spring-boot-cli，Spring Tool Suite 等工具创建。
 
 可以很方便地使用在线的 Spring Initializr 创建项目 https://start.spring.io/ ，输入项目信息，选择项目类型和 JDK 版本，选择 starter 组件，即可在线生成项目。
+

@@ -45,6 +45,15 @@ const config = {
         sidebarPath: require.resolve('./sidebars.js'),
       }, 
     ],
+    [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'springboot',
+        path: 'note/springboot',
+        routeBasePath: 'note/docker',
+        sidebarPath: require.resolve('./sidebars.js'),
+      }, 
+    ],
   ],
 
   presets: [
