@@ -1,3 +1,8 @@
+---
+title: 单例模式
+sidebar_position: 1
+---
+
 # 单例模式
 
 单例模式（ Singleton Pattern) 是 Java 中最简单的设计模式之一。

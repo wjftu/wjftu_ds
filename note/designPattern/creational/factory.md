@@ -1,6 +1,6 @@
 ---
-title: 工厂模式2
-sidebar_position: 1
+title: 工厂模式
+sidebar_position: 2
 ---
 
 # 工厂模式
