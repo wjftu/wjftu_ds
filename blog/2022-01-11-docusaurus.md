@@ -57,7 +57,7 @@ Docusaurus 有 3 种页面类型，分别是博客、文档、普通页面。默
 
 docusaurus.config.js 文件可以配置导航栏、站点信息、插件，等等。
 
-```
+```js
 const config = {
   title: '健峰的网站',
   url: 'https://wjftu.com',
@@ -65,11 +65,14 @@ const config = {
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
-...
+  trailingSlash: true,
+  //...
 ```
 
+trailingSlash 设为 true 可以使得 url 后面带上 trailing slash ，虽然不带 Github Pages 也能 301 重定向到带 trailng slash 的 url 。不同的静态资源托管服务商有不同的标准，没有统一的。
+
 代码高亮可以在 themeConfig 里面配置，非默认支持的语言通过 additionalLanguages 配置。
-```
+```js
 const lightCodeTheme = require('prism-react-renderer/themes/github');
 const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 ...
