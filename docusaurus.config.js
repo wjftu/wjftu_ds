@@ -21,6 +21,15 @@ const config = {
     [
       '@docusaurus/plugin-content-docs',
       {
+        id: 'life',
+        path: 'life',
+        routeBasePath: 'life',
+        sidebarPath: require.resolve('./sidebars.js'),
+      }, 
+    ],
+    [
+      '@docusaurus/plugin-content-docs',
+      {
         id: 'algorithmPractice',
         path: 'note/algorithmPractice',
         routeBasePath: 'note/algorithmPractice',
@@ -89,7 +98,7 @@ const config = {
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       navbar: {
-        title: '首页',
+        title: 'Home',
         logo: {
           alt: 'My Site Logo',
           src: 'img/logo.svg',
@@ -103,6 +112,7 @@ const config = {
           // },
           {to: '/blog', label: 'Blog', position: 'left'},
           {to: '/note', label: 'Note', position: 'left'},
+          {to: '/life/2022', label: 'Life', position: 'left'},
           // {
           //   href: 'https://github.com/facebook/docusaurus',
           //   label: 'GitHub',
