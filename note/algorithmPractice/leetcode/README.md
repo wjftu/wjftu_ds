@@ -1,14 +1,18 @@
 # LeetCode
 
-世界知名算法题网站，1000+题目
+世界知名算法题网站，2000+ 题目
 
 网址： leetcode.com
 
-油猴脚本推荐：  
-- 方便看答案，可以安装[leetcode题解助手](https://greasyfork.org/zh-CN/scripts/386679)脚本，  
-- 防止跳转中国站，可以安装[禁止 Leetcode 跳转中文站](https://greasyfork.org/zh-CN/scripts/408371)脚本
+中文： leetcode-cn.com
+
+防止跳转中国站，可以安装油猴脚本：[禁止 Leetcode 跳转中文站](https://greasyfork.org/zh-CN/scripts/408371)脚本
 
 题目顺序只是出题的顺序，不是难度顺序，也不是类型顺序。刷题建议按类型刷，想快速刷题可以先看一遍答案再解答。
+
+也可以按照大厂面试高频题来刷，很多有启发性的题会是高频题。例如 [codetop.cc](https://codetop.cc/home)
+
+
 
 |L|E|E|T|C|O|D|E|||
 | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
