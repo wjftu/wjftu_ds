@@ -59,3 +59,40 @@ class Solution {
     }
 }
 ```
+
+### [207 Course Schedule](207)
+
+There are a total of numCourses courses you have to take, labeled from 0 to numCourses - 1. You are given an array prerequisites where prerequisites[i] = [ai, bi] indicates that you must take course bi first if you want to take course ai.
+
+```java
+class Solution {
+    public boolean canFinish(int numCourses, int[][] prerequisites) {
+        // 0-unknown 1-visiting 2-visited
+        int[] visited=new int[numCourses];
+        ArrayList<Integer>[] graph=new ArrayList[numCourses];
+        for(int i=0;i<numCourses;++i){
+            graph[i]=new ArrayList<>();
+        }
+        
+        for(int[] arr:prerequisites){
+            graph[arr[0]].add(arr[1]);
+        }
+        
+        for(int i=0;i<numCourses;++i){
+            if(dfs(i, visited, graph)) return false;
+        }
+        return true;
+    }
+    // true-has circle
+    private boolean dfs(int cur, int[] visited, ArrayList<Integer>[] graph){
+        if(visited[cur]==1) return true;
+        if(visited[cur]==2) return false;
+        visited[cur]=1;
+        for(int i:graph[cur]){
+            if(dfs(i, visited, graph)) return true;
+        }
+        visited[cur]=2;
+        return false;
+    }
+}
+```
