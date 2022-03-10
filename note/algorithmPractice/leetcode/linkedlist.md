@@ -1,3 +1,7 @@
+---
+sidebar_position: -1
+---
+
 # Linked List
 
 ### [2 Add Two Numbers](2)

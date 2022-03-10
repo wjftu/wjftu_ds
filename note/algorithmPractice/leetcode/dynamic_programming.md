@@ -1,3 +1,8 @@
+---
+sidebar_position: -1
+---
+
+
 # Dynamic Programming
 
 ### [70. Climbing Stairs](70)

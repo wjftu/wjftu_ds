@@ -1,3 +1,7 @@
+---
+sidebar_position: -1
+---
+
 # Binary Search
 
 ### [69 Sqrt(x)](69)
