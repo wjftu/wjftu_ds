@@ -63,6 +63,15 @@ const config = {
         sidebarPath: require.resolve('./sidebars.js'),
       }, 
     ],
+    [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'java',
+        path: 'note/java',
+        routeBasePath: 'note/java',
+        sidebarPath: require.resolve('./sidebars.js'),
+      }, 
+    ],
   ],
 
   presets: [
