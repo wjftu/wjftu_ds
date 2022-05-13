@@ -3,6 +3,8 @@ title: HelloWorld
 sidebar_position: 2
 ---
 
+### HelloWorld
+
 新建一个 web 项目的 HelloWorld
 
 引入 maven 依赖， pom 文件如下
@@ -89,3 +91,42 @@ public class HelloController {
 运行启动类的 main 方法，访问 localhost:8080/hello/springboot ，显示 `hello spring boot`
 
 并没有配置 tomcat 等 web 服务器（使用了内嵌的 tomcat 服务器），也没有对应用进行配置，直接就成功搭建了一个简单的 web 服务！
+
+### 好用的工具
+
+1. lombok
+
+可以方便的省去很多模版代码
+
+在 Intellij 中安装 lombok 插件并添加依赖
+
+```xml
+<dependency>
+    <groupId>org.projectlombok</groupId>
+    <artifactId>lombok</artifactId>
+    <optional>true</optional>
+</dependency>
+```
+
+常用方法：
+
+* @data 自动生成 getter setter toString equals hashCode 方法  
+* @Getter/Setter 自动生成 getter setter 方法  
+* @ToString 自动生成 toString 方法  
+* @EqualsAndHashcode 自动根据字段重写 equals 和 hashcode 方法  
+* @NoArgsConstructor/AllArgsConstructor 自动生成无参、全参构造函数  
+
+2. devtools
+
+按 ctrl+F9 或 command+F9 可以更新并启动项目
+
+如果需要真正的改变代码自动更新，只有用付费的 JRebel .
+
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-devtools</artifactId>
+    <scope>runtime</scope>
+    <optional>true</optional>
+</dependency>
+```
