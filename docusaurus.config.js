@@ -121,7 +121,7 @@ const config = {
           // },
           {to: '/blog', label: 'Blog', position: 'left'},
           {to: '/note', label: 'Note', position: 'left'},
-          {to: '/life/2022', label: 'Life', position: 'left'},
+          {to: '/life/2023', label: 'Life', position: 'left'},
           // {
           //   href: 'https://github.com/facebook/docusaurus',
           //   label: 'GitHub',
@@ -146,6 +146,10 @@ const config = {
               {
                 label: 'Docker',
                 to: '/note/docker',
+              },
+              {
+                label: 'Java',
+                to: '/note/java',
               },
             ],
           },
