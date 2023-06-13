@@ -1,5 +1,7 @@
-# JDBC
-
+---
+title: JDBC
+sidebar_position: 1
+---
 首先引入依赖
 
 ```xml

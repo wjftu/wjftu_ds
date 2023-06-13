@@ -1,4 +1,7 @@
-# Redis
+---
+title: Redis
+sidebar_position: 10
+---
 
 添加 spring-boot-starter-data-redis 以及连接池依赖
 

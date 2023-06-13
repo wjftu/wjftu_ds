@@ -59,10 +59,10 @@ spring:
 
 ```xml
 <dependency>
-    <groupId>mysql</groupId>
-    <artifactId>mysql-connector-java</artifactId>
+    <groupId>com.mysql</groupId>
+    <artifactId>mysql-connector-j</artifactId>
     <scope>runtime</scope>
 </dependency>
 ```
 
-虽然依赖的版本可以自动配置，但还是可以根据实际情况手动指定版本。可以直接在引入 mysql-connector-java 时指定版本，也可以在 propertities 中指定。
+虽然依赖的版本可以自动配置，但还是可以根据实际情况手动指定版本。可以直接在引入 mysql-connector-j 时指定版本，也可以在 propertities 中指定。

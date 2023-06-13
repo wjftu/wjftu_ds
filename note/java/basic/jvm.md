@@ -92,3 +92,19 @@ jmap -histo:live [pid]
 
 JVM 参数 `-XX:+PrintGCDetails` 输出 GC 详细日志， `-XX:+PrintHeapAtGC` 打印 GC 前后状态
 
+### 方法区
+
+方法区在 java 8 后被元空间取代
+
+方法区保存了类的域信息（成员变量）的（类型，声明顺序，修饰符，等 ），方法的信息（方法名，参数类型，修饰符，返回值类型，字节码，异常表等）
+
+
+常量池（Constants poll）是为了避免频繁创建销毁变量影响性能，实现变量共享。例如字符串常量池，编译阶段把所有字符串放入
+
+```java
+public void test(){
+    String s1 = "a"; //运行时常量池中
+    String s2 = new String("a"); //在堆中创建一个 String 对象
+    boolean b = s1 == s2; //false
+}
+```
