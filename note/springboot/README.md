@@ -29,8 +29,9 @@ CURRENT 是最新稳定版。GA 是发布版本，是稳定版本。 SNAPSHOT �
 
 系统要求：
 
-* 2.x 版本要求 Java 8 以上，目前兼容至 Java 17
-* 2.x 版本要求 Maven 3.5+ 或 Gradel 6.8.x +
+* Spring Boot 2 版本要求 Java 8 以上，Maven 3.5+ 或 Gradel 6.8.x +
+* Spring Boot 3 要求 Java 17 以上，目前兼容至 20，Maven 3.6.3+ 或 Gradle 7.5+ 或 8.x
+
 
 
 
@@ -39,4 +40,13 @@ CURRENT 是最新稳定版。GA 是发布版本，是稳定版本。 SNAPSHOT �
 有多种方式可以创建 Spring Boot 项目，可以是普通的 Maven 或 Gradle 项目，也可以用 spring-boot-cli，Spring Tool Suite 等工具创建。
 
 可以很方便地使用在线的 Spring Initializr 创建项目 https://start.spring.io/ ，输入项目信息，选择项目类型和 JDK 版本，选择 starter 组件，即可在线生成项目。
+
+
+
+2. 特性小结
+1. 简化整合
+导入相关的场景，拥有相关的功能。场景启动器
+默认支持的所有场景：https://docs.spring.io/spring-boot/docs/current/reference/html/using.html#using.build-systems.starters
+● 官方提供的场景：命名为：spring-boot-starter-*
+● 第三方提供场景：命名为：*-spring-boot-starter
 
