@@ -10,4 +10,6 @@ slag: note
 * [算法刷题](/note/algorithmPractice)  
 * [设计模式](/note/designPattern)
 * [Docker](/note/docker)
-* [Spring Boot](/note/springboot)
+* [Spring Boot](/note/springboot)  
+* [Java](/note/java)
+* [开发工具](/note/tool)
