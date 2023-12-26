@@ -30,57 +30,57 @@ const config = {
     [
       '@docusaurus/plugin-content-docs',
       {
-        id: 'algorithmPractice',
-        path: 'note/algorithmPractice',
-        routeBasePath: 'note/algorithmPractice',
+        id: 'note',
+        path: 'note',
+        routeBasePath: 'note',
         sidebarPath: require.resolve('./sidebars.js'),
       }, 
     ],
-    [
-      '@docusaurus/plugin-content-docs',
-      {
-        id: 'designPattern',
-        path: 'note/designPattern',
-        routeBasePath: 'note/designPattern',
-        sidebarPath: require.resolve('./sidebars.js'),
-      }, 
-    ],
-    [
-      '@docusaurus/plugin-content-docs',
-      {
-        id: 'docker',
-        path: 'note/docker',
-        routeBasePath: 'note/docker',
-        sidebarPath: require.resolve('./sidebars.js'),
-      }, 
-    ],
-    [
-      '@docusaurus/plugin-content-docs',
-      {
-        id: 'springboot',
-        path: 'note/springboot',
-        routeBasePath: 'note/springboot',
-        sidebarPath: require.resolve('./sidebars.js'),
-      }, 
-    ],
-    [
-      '@docusaurus/plugin-content-docs',
-      {
-        id: 'java',
-        path: 'note/java',
-        routeBasePath: 'note/java',
-        sidebarPath: require.resolve('./sidebars.js'),
-      }, 
-    ],
-    [
-      '@docusaurus/plugin-content-docs',
-      {
-        id: 'tool',
-        path: 'note/tool',
-        routeBasePath: 'note/tool',
-        sidebarPath: require.resolve('./sidebars.js'),
-      }, 
-    ],
+    // [
+    //   '@docusaurus/plugin-content-docs',
+    //   {
+    //     id: 'designPattern',
+    //     path: 'note/designPattern',
+    //     routeBasePath: 'note/designPattern',
+    //     sidebarPath: require.resolve('./sidebars.js'),
+    //   }, 
+    // ],
+    // [
+    //   '@docusaurus/plugin-content-docs',
+    //   {
+    //     id: 'docker',
+    //     path: 'note/docker',
+    //     routeBasePath: 'note/docker',
+    //     sidebarPath: require.resolve('./sidebars.js'),
+    //   }, 
+    // ],
+    // [
+    //   '@docusaurus/plugin-content-docs',
+    //   {
+    //     id: 'springboot',
+    //     path: 'note/springboot',
+    //     routeBasePath: 'note/springboot',
+    //     sidebarPath: require.resolve('./sidebars.js'),
+    //   }, 
+    // ],
+    // [
+    //   '@docusaurus/plugin-content-docs',
+    //   {
+    //     id: 'java',
+    //     path: 'note/java',
+    //     routeBasePath: 'note/java',
+    //     sidebarPath: require.resolve('./sidebars.js'),
+    //   }, 
+    // ],
+    // [
+    //   '@docusaurus/plugin-content-docs',
+    //   {
+    //     id: 'tool',
+    //     path: 'note/tool',
+    //     routeBasePath: 'note/tool',
+    //     sidebarPath: require.resolve('./sidebars.js'),
+    //   }, 
+    // ],
   ],
 
   presets: [

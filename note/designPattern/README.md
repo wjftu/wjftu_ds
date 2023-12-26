@@ -1,6 +1,7 @@
 ---
 title: 设计模式
 sidebar_position: 1
+label: 设计模式
 ---
 
 # 设计模式
