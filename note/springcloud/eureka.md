@@ -122,3 +122,82 @@ eureka:
 ```
 Registering application PRODUCER-SERVER with eureka with status UP
 ```
+
+通过 DiscoveryClient 获取实例信息
+
+```java
+@Autowired
+DiscoveryClient discoveryClient;
+
+@RequestMapping("/getInstance")
+public List<ServiceInstance> getInstances() {
+    List<ServiceInstance> list = discoveryClient.getInstances("PRODUCER-SERVER");
+    return list;
+}
+```
+
+结果如下：
+
+```json
+[{"uri":"http://172.20.10.9:8081","secure":false,"metadata":{"management.port":"8081"},"instanceId":"172.20.10.9:producer-server:8081","serviceId":"PRODUCER-SERVER","instanceInfo":{"instanceId":"172.20.10.9:producer-server:8081","app":"PRODUCER-SERVER","appGroupName":null,"ipAddr":"172.20.10.9","sid":"na","homePageUrl":"http://172.20.10.9:8081/","statusPageUrl":"http://172.20.10.9:8081/actuator/info","healthCheckUrl":"http://172.20.10.9:8081/actuator/health","secureHealthCheckUrl":null,"vipAddress":"producer-server","secureVipAddress":"producer-server","countryId":1,"dataCenterInfo":{"@class":"com.netflix.appinfo.InstanceInfo$DefaultDataCenterInfo","name":"MyOwn"},"hostName":"172.20.10.9","status":"UP","overriddenStatus":"UNKNOWN","leaseInfo":{"renewalIntervalInSecs":30,"durationInSecs":90,"registrationTimestamp":1704199881624,"lastRenewalTimestamp":1704199881624,"evictionTimestamp":0,"serviceUpTimestamp":1704199881119},"isCoordinatingDiscoveryServer":false,"metadata":{"management.port":"8081"},"lastUpdatedTimestamp":1704199881624,"lastDirtyTimestamp":1704199881058,"actionType":"ADDED","asgName":null},"scheme":"http","host":"172.20.10.9","port":8081}]
+```
+
+
+写一个提供方
+
+```java
+@RestController
+public class ProducerService {
+
+    @Value("${server.port}")
+    int port;
+
+    @RequestMapping("/producer")
+    public String service() {
+        return "producer of port " + port;
+    }
+
+}
+```
+
+再写一个调用方
+
+```java
+@RestController
+public class ConsumerService {
+
+    @Autowired
+    RestTemplate restTemplate;
+
+    @Value("${server.port}")
+    int port;
+
+    @RequestMapping("/consumer")
+    public String service() {
+        String url = "http://producer-server/producer";
+        String response = restTemplate.getForObject(url, String.class);
+        return "comsumer of port " + port + ", " + response;
+    }
+}
+```
+
+配置类中，restTemplate 加上 `@LoadBalanced` 注解，调用的时候无需指定 ip ，而是指定服务名。
+
+```java
+@Bean
+@LoadBalanced
+public RestTemplate restTemplate(ClientHttpRequestFactory factory) {
+    RestTemplate restTemplate = new RestTemplate(factory);
+    return restTemplate;
+}
+```
+
+启动两个提供方，注册到 eureka 。调用方调用提供方的服务，可以看到负载均衡
+
+```
+% curl http://localhost:9080/consumer
+comsumer of port 9080 producer of port 8081        
+% curl http://localhost:9080/consumer
+comsumer of port 9080 producer of port 8082
+```
+
