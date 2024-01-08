@@ -4,31 +4,29 @@ import styles from './HomepageFeatures.module.css';
 
 const FeatureList = [
   {
-    title: '常常喜乐',
+    title: '信心',
     Svg: require('../../static/img/undraw_docusaurus_mountain.svg').default,
     description: (
       <>
-        喜乐的心乃是良药
+        你们若有信心像一粒芥菜种，就是对这座山说：你从这边挪到那边，它也必挪去，并且你们没有一件不能做的事了
       </>
     ),
   },
   {
-    title: '珍惜光阴好好学习',
+    title: '不要害怕',
     Svg: require('../../static/img/undraw_docusaurus_tree.svg').default,
     description: (
       <>
-        要爱惜光阴，
-        因为现今的世代邪恶
+        你不要害怕，因为我与你同在；不要惊惶，因为我是你的神。我必坚固你，我必帮助你，我必用我公义的右手扶持你
       </>
     ),
   },
   {
-    title: 'Powered by React',
+    title: '更深经历',
     Svg: require('../../static/img/undraw_docusaurus_react.svg').default,
     description: (
       <>
-        从 Hugo 到 Docsify 和 Vuepress ，又到 Docusaurus，
-        希望好好写笔记，别再乱换框架了
+        把船开到水深之处，下网打鱼
       </>
     ),
   },
