@@ -8,6 +8,9 @@ https://spring.io/projects/spring-cloud/
 历史版本文档：  
 https://docs.spring.io/spring-cloud/docs/
 
+例如 2021.0.9 AKA jubilee：  
+https://docs.spring.io/spring-cloud/docs/2021.0.9/reference/html/
+
 
 Spring Cloud 需要与 Spring Boot 版本匹配，版本兼容性可以在官方文档中看到，例如当前是：
 
@@ -65,5 +68,4 @@ pom.xml
 * Eureka - 实现服务治理（服务注册与发现）
 * Config - 配置中心，集中管理配置，可以对配置进行版本管理
 * Feign - 为服务之间相互调用提供声明式负载均衡，基于 Ribbon
-* Hystrix - 断路器，保护系统，控制故障范围
 * Gateway - api网关，路由，负载均衡，统一入口
