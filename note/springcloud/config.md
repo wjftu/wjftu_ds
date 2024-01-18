@@ -203,3 +203,58 @@ spring:
 }
 ```
 
+可以使用 composite 进行混合配置
+
+```
+spring:
+  application:
+    name: config-server
+  profiles:
+    active: native
+  cloud:
+    config:
+      server:
+        composite:
+          - type: native
+            searchLocations: classpath:/config
+          - type: git
+            uri: /path/to/git
+```
+
+
+### 客户端
+
+引入 maven 依赖
+
+```xml
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-config</artifactId>
+</dependency>
+```
+
+
+
+早期需要用 bootstrap.yml 配置，现在默认不支持 bootstrap.yml 了，直接在 application.yml 配置
+
+application profile label 对应的配置如下，也可以使用 spring.cloud.config.name 配置多个 application
+
+```
+"application" = ${spring.application.name}
+"profile" = ${spring.profiles.active} (actually Environment.getActiveProfiles())
+"label" = ${spring.cloud.config.label}
+```
+
+spring.config.import 用来配置配置信息，不仅仅是配置中心地址，还可以配置其他配置来源。optinal 表示获取不到配置服务仍然能启动
+
+配置中心地址要加上结尾的斜杠，不然会报错：File extension is not known to any PropertySourceLoader. If the location is meant to reference a directory, it must end in '/' or File.separator
+
+```yml
+spring:
+  config:
+    import: optinal:configserver:http://localhost:8888/
+  cloud:
+    config:
+      name: consumer
+```
+
