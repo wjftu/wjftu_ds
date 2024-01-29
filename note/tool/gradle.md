@@ -12,15 +12,27 @@ sidebar_position: 21
 解压并配置环境变量
 
 ```
-export GRADLE_HOME=/opt/gradle/gradle-8.1.1
+export GRADLE_HOME=/opt/gradle/gradle-8.4
 export PATH=$PATH:$GRADLE_HOME/bin
 export GRADLE_USER_HOME=/path/to/maven/repository
 ```
 
 ```
-$ gradle -v
+% gradle -v
 
-Welcome to Gradle 8.1.1!
+------------------------------------------------------------
+Gradle 8.4
+------------------------------------------------------------
+
+Build time:   2023-10-04 20:52:13 UTC
+Revision:     e9251e572c9bd1d01e503a0dfdf43aedaeecdc3f
+
+Kotlin:       1.9.10
+Groovy:       3.0.17
+Ant:          Apache Ant(TM) version 1.10.13 compiled on January 4 2023
+JVM:          17.0.7 (Oracle Corporation 17.0.7+8-LTS-224)
+OS:           Mac OS X 13.3.1 x86_64
+
 ```
 
 目录结构
@@ -37,7 +49,8 @@ settings.gradle 配置文件，定义项目和子项目名称信息
 使用 gradle init 创建项目
 
 ```
-$ gradle init
+% gradle init
+Starting a Gradle Daemon (subsequent builds will be faster)
 
 Select type of project to generate:
   1: basic
@@ -57,9 +70,9 @@ Enter selection (default: Java) [1..6] 3
 
 Generate multiple subprojects for application? (default: no) [yes, no] 
 Select build script DSL:
-  1: Groovy
-  2: Kotlin
-Enter selection (default: Groovy) [1..2] 1
+  1: Kotlin
+  2: Groovy
+Enter selection (default: Kotlin) [1..2] 1
 
 Select test framework:
   1: JUnit 4
@@ -68,16 +81,55 @@ Select test framework:
   4: JUnit Jupiter
 Enter selection (default: JUnit Jupiter) [1..4] 
 
-Project name (default: demo1): 
-Source package (default: demo1): 
+Project name (default: test): testproject
+Source package (default: testproject): com.test
 Enter target version of Java (min. 7) (default: 17): 
 Generate build using new APIs and behavior (some features may change in the next minor release)? (default: no) [yes, no] no
 
-> Task :init
-Get more help with your project: https://docs.gradle.org/8.1.1/samples/sample_building_java_applications.html
 
-BUILD SUCCESSFUL in 27s
+> Task :init
+To learn more about Gradle by exploring our Samples at https://docs.gradle.org/8.4/samples/sample_building_java_applications.html
+
+
+```
+
+会自动生成一个 gradle 项目，并带一个主程序 app/src/main/java/com/test/App.java
+
+```java
+package com.test;
+
+public class App {
+    public String getGreeting() {
+        return "Hello World!";
+    }
+
+    public static void main(String[] args) {
+        System.out.println(new App().getGreeting());
+    }
+}
+```
+
+将项目拖到 IntelliJ Idea 中运行，输出和 Maven 项目会有些不一样
+
+```
+20:22:19: Executing ':app:App.main()'...
+
+> Task :app:compileJava
+> Task :app:processResources NO-SOURCE
+> Task :app:classes
+
+> Task :app:App.main()
+Hello World!
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.4/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 4s
 2 actionable tasks: 2 executed
+20:22:24: Execution finished ':app:App.main()'.
 ```
 
 常见命令
