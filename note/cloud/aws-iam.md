@@ -64,3 +64,23 @@ AdministratorAccess 最大的权限，当前拥有 408 个服务的权限
     ]
 }
 ```
+
+### 操作
+
+查看用户 
+
+```
+[cloudshell-user@ip-10-132-34-157 ~]$ aws iam list-users
+{
+    "Users": [
+        {
+            "Path": "/",
+            "UserName": "jeff",
+            "UserId": "AIDA374KFXOWN4NRSOAKA",
+            "Arn": "arn:aws:iam::824386632620:user/jeff",
+            "CreateDate": "2024-04-09T04:03:30+00:00",
+            "PasswordLastUsed": "2024-04-09T04:06:25+00:00"
+        }
+    ]
+}
+```
