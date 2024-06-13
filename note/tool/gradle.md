@@ -263,3 +263,76 @@ gradle test 编译测试代码，生成测试报告
 gradle build 构建项目
 gradle build -x test 跳过测试构建
 ```
+
+配置文件
+
+不同于 Maven 通过配置文件来配置，Gradle 通过编写 Kotlin 或 Groovy 脚本调用 Gradle 的 Api 进行配置（其中 Kotlin 的配置文件带有 .kts）
+
+settings.gradle.kts 用于配置项目
+
+
+gradle 在 settings.gradle.kts 文件中提供了一个名为 settings 的 SettingsDelegate 对象，settings 可以省略，例如 `ettings.rootProject.name` 可以省略为 `rootProject.name`
+
+rootProject.name 配置项目名称，include 配置子项目
+
+```
+rootProject.name = "project-name"
+
+include("sub-project-1")
+include("sub-project-2")
+```
+
+buid.gradle.kts 
+
+plugins 配置插件，如果是官方的插件不需要版本号，非官方的需要传入版本号，下方的语法是用 kotlin 中缀函数传递版本号
+
+```
+plugins {
+    //中缀函数，类似 id("org.springframework.boot").version("3.3.0")
+    id("org.springframework.boot") version "3.3.0"
+    id("io.spring.dependency-management") version "1.1.5"
+    id("java")
+}
+```
+
+配置 java 插件
+
+```
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+```
+
+repositories 配置仓库，mavenCentral 为 maven 中央仓库
+
+```
+repositories {
+    mavenCentral()
+    maven { url = uri("https://repo.spring.io/milestone") }
+}
+```
+
+dependencies 配置依赖
+
+implementation 配置依赖，testImplementation 配置测试需要的依赖
+
+1. implementation: 配置依赖
+2. testImplementation: 用于添加测试时需要的依赖项。
+3. compileOnly: 用于指定编译时依赖，但不会打包
+4. runtimeOnly：仅在运行时使用，不参与编译
+
+
+依赖的 groupId artifactId version 通过冒号分隔，也可以用三个参数，不需要引入的间接依赖可以通过 exclude 除掉
+
+```
+dependencies {
+  implementation("org.springframework.boot:spring-boot-starter-web"){
+    exclude("groupId", "artifactId")
+  }
+  implementation("commons-io:commons-io:2.16.1")
+  testImplementation("org.springframework.boot:spring-boot-starter-test")
+}
+
+```
