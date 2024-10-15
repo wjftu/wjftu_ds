@@ -227,3 +227,47 @@ render() {
 ```
 
 
+接下来把 App 改为函数式组件，函数式组件不再有 this ，但可以通过 useState 设置渲染的对象。useEffect 可以让函数执行一次，第二个参数配置什么时候重复执行，传入空数组表示这个函数只执行一次。
+
+```js
+const App = () => {
+    const [pokemons, setPokemons] = React.useState(["皮卡丘", "可达鸭", "小火龙"])
+    const [filteredPokemons, setFilteredPokemons] = React.useState([...pokemons])
+    const onChangeHandler = (e) => {
+        const filtered = pokemons.filter(p => {
+            return p.includes(e.target.value)
+        })
+        setFilteredPokemons(filtered)
+    }
+    React.useEffect(() => {
+        fetch('https://pokeapi.co/api/v2/pokemon')
+            .then(res => res.json())
+            .then( json => {
+                const fetchedPokemons = json.results.map(e => e.name)
+                setPokemons(fetchedPokemons)
+                setFilteredPokemons(fetchedPokemons)
+            })
+    }, [])
+  
+    return (
+        <div>
+            <h1>宝可梦</h1>
+            <Input handler={onChangeHandler} />
+            <List pokemonList={filteredPokemons} />
+        </div>    
+    )
+}
+```
+
+List 组件也可以改为函数式组件，也可以用更简洁的方式 `const List = ({pokemonList}) => {}`
+
+```js
+const List = (props) => {
+    const { pokemonList } = props
+    return (
+        <ul>
+            { pokemonList.map( (p, index) => <li key={index}>{p}</li>) }
+        </ul>
+    )
+}
+```
