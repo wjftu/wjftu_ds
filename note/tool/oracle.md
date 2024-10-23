@@ -88,6 +88,12 @@ create table tab_name (
 alter table tab_name add constraint tb_pk primary key (deptno);
 ```
 
+添加非空约束
+
+```sql
+alter table tab_name modify  (col1 not null );
+```
+
 从其他表创建表
 
 ```sql
@@ -168,7 +174,8 @@ EMAIL     NOT NULL VARCHAR2(255)
 
 修改表名 rename
 ```sql
-rename tab_nrenaame to tab_name_new
+rename tab_name to tab_name_new；
+alter table tab_name rename to tab_name_new;
 ```
 
 复制表
@@ -471,3 +478,68 @@ select to_date('2000-01-01 01:01:01', 'yyyy-mm-dd hh24:mi:ss') from dual;
 select to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss') from dual;
 ```
 
+### 导入导出
+
+可以使用 exp 和 imp 进行导入导出，无需管理员权限，但需要两个数据库同一个用户名
+
+导出表
+
+rows 是否导出数据，默认 y ，为 n 则只导出表结构  
+file 导出文件名，默认 expdat.dmp  
+log 日志文件  
+buffer 缓冲区字节大小  
+tables 需要导出的表，逗号分隔  
+indexes 是否导出索引，默认 y
+
+```sql
+exp user/password@ip1:1521/db1 file=/path/to/expdat.dmp log=/path/to/exp.log tables=table1,table2 rows=n indexes=y buffer=1000000 
+```
+
+rows 是否导出数据，默认 y ，为 n 则只导出表结构  
+file 导入文件名，默认 expdat.dmp  
+log 日志文件  
+buffer 缓冲区字节大小  
+indexes 是否导出索引，默认 y
+commit 每插入一行进行提交，默认 n
+
+```sql
+imp user/password@ip2:1521/db2 file=/path/to/expdat.dmp log=/path/to/imp.log commit=yes buffer=1000000 indexes=y
+```
+
+查看帮助
+
+```
+> exp help=y
+
+Export: Release 19.0.0.0.0 - Production on Wed Oct 23 16:32:55 2024
+Version 19.3.0.0.0
+
+Keyword    Description (Default)      Keyword      Description (Default)
+--------------------------------------------------------------------------
+USERID     username/password          FULL         export entire file (N)
+BUFFER     size of data buffer        OWNER        list of owner usernames
+FILE       output files (EXPDAT.DMP)  TABLES       list of table names
+COMPRESS   import into one extent (Y) RECORDLENGTH length of IO record
+GRANTS     export grants (Y)          INCTYPE      incremental export type
+INDEXES    export indexes (Y)         RECORD       track incr. export (Y)
+DIRECT     direct path (N)            TRIGGERS     export triggers (Y)
+LOG        log file of screen output  STATISTICS   analyze objects (ESTIMATE)
+ROWS       export data rows (Y)       PARFILE      parameter filename
+CONSISTENT cross-table consistency(N) CONSTRAINTS  export constraints (Y)
+...
+
+> imp help=y
+...
+Keyword  Description (Default)       Keyword      Description (Default)
+--------------------------------------------------------------------------
+USERID   username/password           FULL         import entire file (N)
+BUFFER   size of data buffer         FROMUSER     list of owner usernames
+FILE     input files (EXPDAT.DMP)    TOUSER       list of usernames
+SHOW     just list file contents (N) TABLES       list of table names
+IGNORE   ignore create errors (N)    RECORDLENGTH length of IO record
+GRANTS   import grants (Y)           INCTYPE      incremental import type
+INDEXES  import indexes (Y)          COMMIT       commit array insert (N)
+ROWS     import data rows (Y)        PARFILE      parameter filename
+LOG      log file of screen output   CONSTRAINTS  import constraints (Y)
+...
+```
