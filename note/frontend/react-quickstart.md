@@ -804,7 +804,7 @@ install route
 npm install react-route-dom@5
 ```
 
-import route
+Import route
 
 ```js
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom'
