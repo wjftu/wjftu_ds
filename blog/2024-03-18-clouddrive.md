@@ -230,7 +230,7 @@ volumes:
 启动 
 
 ```sh
-docker compuse up
+docker compose up
 ```
 
 日志中可以看到用户名和密码
@@ -242,7 +242,7 @@ cloudreve  | [Info]    2024-03-18 23:51:45 Admin password: 43B6S1wb
 
 访问 http://ip:5212 即可进入
 
-反向代理配置同上
+反向代理配置同上（配置反向代理前需要先通过 ip 访问，设置域名）
 
 两者镜像比较：
 
@@ -254,4 +254,4 @@ cloudreve/cloudreve     latest    328970d33c60   5 months ago    108MB
 p3terx/aria2-pro        latest    997da399fc5d   18 months ago   29.2MB
 ```
 
-体验下来感觉 cloudreve 界面更好一些，而且更加轻量，最终选择了 cloudreve
+体验下来感觉 cloudreve 界面更好一些，而且更加轻量，最终选择了 cloudreve 
