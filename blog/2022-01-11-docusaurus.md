@@ -233,3 +233,52 @@ blog: {
 2021-05-28-my-blog-post-title.mdx
 2021-05-28-my-blog-post-title/index.md
 ```
+
+使用 GitHub Actions 构建
+
+创建用于部署的 key pair ，并添加到服务器
+
+```sh
+ssh-keygen -t ed25519 -C "my_key" -f /path/to/private_key
+ssh-copy-id -i /path/to/private_key.pub user@remote
+```
+
+创建 .github/workflows/deploy.yml 文件，在 GitHub 仓库创建 SERVER_HOST SERVER_USER SERVER_SSH_KEY 这几个 secret
+
+```yml
+on:
+  push:
+    branches:
+      - deploy 
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: |
+          npm ci  
+
+      - name: Build Docusaurus site
+        run: |
+          npm run build
+      
+      - name: Deploy to server via SCP
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}  
+          username: ${{ secrets.SERVER_USER }}  
+          key: ${{ secrets.SERVER_SSH_KEY }}  
+          port: 22  
+          source: 'build/*'
+          target: '/var/www/' 
+          rm: true
+```
