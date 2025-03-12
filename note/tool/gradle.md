@@ -336,3 +336,71 @@ dependencies {
 }
 
 ```
+
+
+私有仓库
+
+通常在企业中会有私有仓库，用来存放内部的 artifacts ，例如 JFrog 和 Nexus ，也有一些公网免费的私有仓库，如 repsy.io
+
+可以通过 maven-publish 插件 deploy 到仓库中
+
+配置如下
+
+```kt
+plugins {
+    id("java")
+    id("maven-publish")
+}
+
+group = "com.wjftu"
+version = "1.0-SNAPSHOT"
+
+repositories {
+    mavenCentral()
+    maven {
+        url = uri("https://repo.repsy.io/mvn/wjfqvi/default/")
+        credentials {
+            username = "${repsyUsername}"
+            password = "${repsyPassword}"
+        }
+    }
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "repsy"
+            url = uri("https://repo.repsy.io/mvn/wjfqvi/default/")
+            credentials {
+                username = "${repsyUsername}"
+                password = "${repsyPassword}"
+            }
+        }
+    }
+    publications {
+        create<MavenPublication>("mavenJava") {
+            from(components["java"]) 
+            groupId = project.group.toString()
+            artifactId = project.name // from settings.gradle.kts
+            version = project.version.toString()
+        }
+    }
+}
+```
+
+deploy 命令 `gradle publish`
+
+如需使用私有仓库的 artifats ，可以在 build.gradle.kts 文件中配置私有仓库地址
+
+```kt
+repositories {
+    mavenCentral()
+    maven {
+        url = uri("https://repo.repsy.io/mvn/wjfqvi/default/")
+        credentials {
+            username = "${repsyUsername}"
+            password = "${repsyPassword}"
+        }
+    }
+}
+```

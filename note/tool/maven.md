@@ -394,3 +394,44 @@ Downloaded from nexus-tencentyun: http://mirrors.cloud.tencent.com/nexus/reposit
 </parent>
 ```
 
+### 私有仓库
+
+企业通常有私有 maven 仓库，用于保存私有依赖和 artifacts 
+
+在 settings.xml 中配置私有仓库信息
+
+```xml
+<server>
+    <server>
+        <id>repsy</id>
+        <username>username</username>
+        <password>password</password>
+    </server>
+</servers>
+```
+
+在 pom.xml 中配置需要 deploy 的仓库
+
+```xml
+<distributionManagement>
+<repository>
+    <id>repsy</id>
+    <url>https://repo.repsy.io/mvn/wjfqvi/default/</url>
+</repository>
+</distributionManagement>
+```
+
+deploy 命令 `mvn deploy`
+
+在 settings.xml 中配置私有仓库镜像即可使用私有仓库
+
+```xml
+<mirrors>
+    <mirror>
+        <id>repsy</id>
+        <mirrorOf>*</mirrorOf>
+        <url>https://repo.repsy.io/mvn/wjfqvi/default/</url>
+        <blocked>false</blocked>
+    </mirror>
+</mirrors>
+```
