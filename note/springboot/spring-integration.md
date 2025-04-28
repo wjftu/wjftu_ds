@@ -31,7 +31,7 @@ Transformer
 
 将消息转为其他格式
 
-### 示例
+### file
 
 将字符串转为大写写入文件
 
@@ -133,3 +133,74 @@ HELLO WORLD
 
 
 
+### sftp
+
+一个自动从远程 sftp 拉取文件的示例
+
+依赖
+
+```
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-integration'
+    implementation 'org.springframework.integration:spring-integration-sftp'
+}
+```
+
+定义 session factory 。生存环境建议用密钥，而不是密码，且关闭 allow unknown keys
+
+```java
+@Bean
+public SessionFactory<SftpClient.DirEntry> sftpSessionFactory() {
+    DefaultSftpSessionFactory factory = new DefaultSftpSessionFactory();
+    factory.setHost(host);
+    factory.setPort(port);
+    factory.setUser(user);
+    factory.setPassword(password);
+    factory.setAllowUnknownKeys(true);
+    return factory;
+}
+```
+
+FileWritingMessageHandler 负责写文件，即使没有手动创建，也有自动配置的
+
+```java
+@Bean
+public SftpInboundFileSynchronizer sftpInboundFileSynchronizer() {
+    SftpInboundFileSynchronizer synchronizer = new SftpInboundFileSynchronizer(sftpSessionFactory());
+    synchronizer.setDeleteRemoteFiles(false);
+    synchronizer.setRemoteDirectory(sftpRemoteDirectory);
+    synchronizer.setFilter(new SftpSimplePatternFileListFilter("*.txt"));
+    synchronizer.setDeleteRemoteFiles(true);
+    return synchronizer;
+
+}
+
+@Bean
+public SftpInboundFileSynchronizingMessageSource sftpMessageSource() {
+    SftpInboundFileSynchronizingMessageSource source = new SftpInboundFileSynchronizingMessageSource(sftpInboundFileSynchronizer());
+    source.setLocalDirectory(new File(sftpLocalDirectory));
+    source.setAutoCreateLocalDirectory(true);
+    source.setMaxFetchSize(10); 
+
+    return source;
+}
+
+@Bean
+public MessageHandler fileWritingMessageHandler() {
+    FileWritingMessageHandler handler = new FileWritingMessageHandler(new File(sftpLocalDirectory));
+    handler.setAutoCreateDirectory(true);
+    handler.setExpectReply(false);
+    return handler;
+}
+
+@Bean
+public IntegrationFlow sftpInboundFlow() {
+
+    return IntegrationFlow
+            .from(sftpMessageSource(), e -> e.poller(Pollers.fixedDelay(Duration.ofSeconds(7)).maxMessagesPerPoll(2)))
+            .handle(message -> {
+                System.out.println("Fetched file: " + message.getPayload());
+            })
+            .get();
+}
+```
