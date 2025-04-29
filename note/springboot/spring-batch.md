@@ -56,6 +56,8 @@ dependencies {
 
 简单的处理流程，从 List 读取字符串，转为大写，控制台输出
 
+这里使用 JobRepository JobRepository 来创建 Step 和 Job ，过去曾经使用 StepBuilderFactory 和 JobBuilderFactory ，已经 deprecated 
+
 ```java
 @Configuration
 public class BatchConfig {
@@ -117,29 +119,16 @@ public class ParameterPrinter implements StepExecutionListener {
 }
 ```
 
-JobLauncher 可以用来执行 job ，并可以在执行时传入参数。默认实现类 TaskExecutorJobLauncher ，支持异步执行 
+JobLauncher 可以用来执行 job ，并可以在执行时传入参数。默认实现类 TaskExecutorJobLauncher ，支持异步执行.
+只要定义了 Job 的 Bean ，它会自动执行，无需手动执行。 
 
 ```java
-@Component
-public class JobLauncherRunner implements CommandLineRunner {
-
-    private final JobLauncher jobLauncher;
-    private final Job job;
-
-    public JobLauncherRunner(JobLauncher jobLauncher, Job job) {
-        this.jobLauncher = jobLauncher;
-        this.job = job;
-    }
-
-    @Override
-    public void run(String... args) throws Exception {
-        JobParameters jobParameters = new JobParametersBuilder()
-                .addString("key1", "value1")
-                .toJobParameters();
-
-        jobLauncher.run(job, jobParameters);
-    }
-}
+    private JobLauncher jobLauncher;
+    private Job job;
+    JobParameters jobParameters = new JobParametersBuilder()
+            .addString("key1", "value1")
+            .toJobParameters();
+    jobLauncher.run(job, jobParameters);
 ```
 
 
@@ -159,5 +148,114 @@ BATCH
 2025-04-25T02:00:24.316+08:00  INFO 20285 --- [           main] o.s.batch.core.job.SimpleStepHandler     : Executing step: [step1]
 2025-04-25T02:00:24.318+08:00  INFO 20285 --- [           main] o.s.batch.core.step.AbstractStep         : Step: [step1] executed in 1ms
 2025-04-25T02:00:24.320+08:00  INFO 20285 --- [           main] o.s.b.c.l.support.SimpleJobLauncher      : Job: [SimpleJob: [name=job1]] completed with the following parameters: [{'key1':'{value=value1, type=class java.lang.String, identifying=true}'}] and the following status: [COMPLETED] in 5ms
+```
+
+### 读取文件写入数据库
+
+从 csv 文件读取数据，并写入 PostgreSQL 数据库
+
+batch_job_instance
+batch_job_execution
+batch_job_execution_params
+batch_step_execution
+batch_step_execution_context
+batch_job_execution_context
+
+数据库实体类
+
+```java
+public class People {
+    private Long id;
+    private String firstName;
+    private String lastName;
+    private String email;
+    // getter and setter
+}
+```
+
+建表
+
+```sql
+CREATE TABLE people (
+    id SERIAL PRIMARY KEY,
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
+    email VARCHAR(150) UNIQUE NOT NULL
+);
+```
+
+csv 文件
+
+```
+firstName,lastName,email
+John,Doe,john.doe@example.com
+Jane,Smith,jane.smith@example.com
+Mark,Johnson,mark.johnson@example.com
+Emily,Williams,emily.williams@example.com
+```
+
+配置类
+
+```java
+@Configuration
+public class CsvBatchConfig {
+    @Bean
+    public FlatFileItemReader<People> reader() {
+        return new FlatFileItemReaderBuilder<People>()
+                .name("userItemReader")
+                .resource(new ClassPathResource("data/user.csv"))
+                .delimited()
+                .names( "firstName", "lastName", "email")
+                .fieldSetMapper(new BeanWrapperFieldSetMapper<>() {{
+                    setTargetType(People.class);
+                }})
+                .linesToSkip(1)
+                .build();
+    }
+
+    @Bean
+    public JdbcBatchItemWriter<People> writer(DataSource dataSource) {
+        return new JdbcBatchItemWriterBuilder<People>()
+                .itemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>())
+                .sql("INSERT INTO people ( first_name, last_name, email) VALUES ( :firstName, :lastName, :email)")
+                .dataSource(dataSource)
+                .build();
+    }
+
+    @Bean
+    public Job importUserJob(JobRepository jobRepository, Step importStep) {
+        return new JobBuilder("importUserJob", jobRepository)
+                .incrementer(new RunIdIncrementer())
+                .start(importStep)
+                .build();
+    }
+
+    @Bean
+    public Step importStep(JobRepository jobRepository,
+                           PlatformTransactionManager transactionManager,
+                           FlatFileItemReader<People> reader,
+                           JdbcBatchItemWriter<People> writer) {
+        return new StepBuilder("importStep", jobRepository)
+                .<People, People>chunk(10, transactionManager)
+                .reader(reader)
+                .writer(writer)
+                .build();
+    }
+```
+
+设置 spring.batch.jdbc.initialize-schema 为 always ，它会自动创建 batch 框架用到的表，默认值为 never ，生产环境可以手动创建
+
+```yaml
+spring:
+    datasource:
+        driver-class-name: org.postgresql.Driver
+        url: jdbc:postgresql://ip:port/defaultdb?sslmode=require
+        username: user
+        password: passw0rd
+    batch:
+        job:
+            enabled: true
+        jdbc:
+            initialize-schema: always
 ```
 
