@@ -212,8 +212,34 @@ Flux<Integer> flux = Flux.just("Jim", "John")
         .subscribeOn(Schedulers.parallel());
 StepVerifier.create(flux)
         .expectNextMatches(i -> i == 3 || i == 4)
+        .expectNextMatches(i -> i == 3 || i == 4)
         .verifyComplete();
 ```
 
+数据缓冲，buffer 可以创建 List 集合的 Flux
 
+```java
+Flux<String> flux = Flux.just("Tom", "Jim", "John", "Jeff", "Mary");
+Flux<List<String>> buffer = flux.buffer(3);
+StepVerifier.create(buffer)
+        .expectNext(Arrays.asList("Tom", "Jim", "John"))
+        .expectNext(Arrays.asList("Jeff", "Mary"))
+        .verifyComplete();
+```
+
+不带参数的 buffer 可以将 flux 转化为含有一个 List 的 Flux，collectList 方法可转为 Mono
+
+```java
+Flux<String> flux = Flux.just("Tom", "Jim", "John", "Jeff", "Mary");
+Flux<List<String>> buffer1 = flux.buffer();
+Mono<List<String>> buffer2 = flux.collectList();
+```
+
+逻辑判断，返回 Mono ，都满足则 all 返回 true ，任意满足则 any 返回 true
+
+```java
+Flux<String> flux = Flux.just("Tom", "Jim", "John", "Jeff", "Mary");
+Mono<Boolean> all = flux.all(name -> name.length() >= 3);
+Mono<Boolean> any = flux.any(name -> "Mary".equals(name));
+```
 

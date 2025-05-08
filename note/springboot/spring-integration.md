@@ -146,7 +146,7 @@ dependencies {
 }
 ```
 
-定义 session factory 。生存环境建议用密钥，而不是密码，且关闭 allow unknown keys
+定义 session factory 。
 
 ```java
 @Bean
@@ -160,6 +160,21 @@ public SessionFactory<SftpClient.DirEntry> sftpSessionFactory() {
     return factory;
 }
 ```
+
+生存环境建议用密钥，而不是密码，且关闭 allow unknown keys
+
+```java
+DefaultSftpSessionFactory factory = new DefaultSftpSessionFactory();
+factory.setHost(host);
+factory.setPort(port);
+factory.setUser(user);
+factory.setPrivateKey(new ByteArrayResource(privateKey.getBytes()));
+factory.setPrivateKeyPassphrase(passPhrase);
+factory.setAllowUnknownKeys(false);
+```
+
+Spring Boot 3.3 对应的 Apache MINA SSHD 支持 RSA ECDSA ，但需要引入 Bouncy Castle 才能支持 ED25519
+
 
 FileWritingMessageHandler 负责写文件，即使没有手动创建，也有自动配置的
 
