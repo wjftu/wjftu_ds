@@ -2,96 +2,185 @@
 
 使用 Spring Boot Security 保护 web 应用
 
-pom 文件中引入 security 的依赖
 
-```xml
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-security</artifactId>
-</dependency>
+
+创建 web 项目，并引入 security 依赖。
+
 ```
-
-一个简单的 web 应用
-
-```java
-@RestController
-public class SecurityController {
-    @RequestMapping("/hello")
-    public String hello(){
-        return "hello";
-    }
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
 }
 ```
 
-不做任何配置，启动时会提示
+定义一个 controller 用于测试
 
 ```
-Using generated security password: b1dd569e-0d1d-4aa3-ba0d-b5e085a79d10
+@RequestMapping("/hello")
+@ResponseBody
+public String hello() {
+    return "hello";
+}
+```
+
+启动项目，由于自动配置，日志会打印密码。
+
+```
+Using generated security password: 645debf5-5eff-4941-a1eb-a5122c48258b
 
 This generated password is for development use only. Your security configuration must be updated before running your application in production.
 ```
 
-浏览器访问所有请求会提示输入用户名和密码，输入用户名和密码，默认用户名为 user ，密码为控制台打印的密码
-
-postman 或 curl 访问会返回 401 ，带上用户名和密码可以访问成功
+浏览器访问任何 url 会跳转到登陆页面，登陆成功会在 response header 里面 set cookie ，后续请求带上 JSESSIONID 即可访问
 
 ```
-$ curl -I http://127.0.0.1:8080/hello
-HTTP/1.1 401 
-WWW-Authenticate: Basic realm="Realm"
+set-cookie:
+JSESSIONID=359740A39A193A7E36CE4330444BBD5B; Path=/; HttpOnly
 
-$ curl -u user:b1dd569e-0d1d-4aa3-ba0d-b5e085a79d10 http://127.0.0.1:8080/hello
-hello
+curl 'http://localhost:8080/hello' -b 'JSESSIONID=359740A39A193A7E36CE4330444BBD5B'
 ```
 
-`curl -u` 的原理是将用户名和密码转为 base64 放入请求头中
+也可以直接使用 http basic 认证
 
 ```
-$ echo -n user:b1dd569e-0d1d-4aa3-ba0d-b5e085a79d10 | base64
-dXNlcjpiMWRkNTY5ZS0wZDFkLTRhYTMtYmEwZC1iNWUwODVhNzlkMTA=
-$ curl -H "Authorization:Basic dXNlcjpiMWRkNTY5ZS0wZDFkLTRhYTMtYmEwZC1iNWUwODVhNzlkMTA=" http://127.0.0.1:8080/hello
-hello
+curl -u user:645debf5-5eff-4941-a1eb-a5122c48258b http://localhost:8080/hello
 ```
 
-自定义 UserDetailsService 和 PasswordEncoder
+SecurityFilterChain 用于配置 Security 的核心接口，配置哪些请求需要认证，如何处理认证和授权，等等
 
-InMemoryUserDetailsManager 将用户凭据存在内存中， NoOpPasswordEncoder 将密码视作普通文本，此时可以使用自定义的用户名和密码访问
-
-```java
-@Bean
-public UserDetailsService userDetailsService(){
-    InMemoryUserDetailsManager userDetailsService = new InMemoryUserDetailsManager();
-    UserDetails userDetails = User.withUsername("jeff")
-            .password("123456")
-            .authorities("read")
-            .build();
-    userDetailsService.createUser(userDetails);
-    return userDetailsService;
-}
-
-@Bean
-public PasswordEncoder passwordEncoder(){
-    return NoOpPasswordEncoder.getInstance();
-}
-```
-
-继承 WebSecurityConfigurerAdapter 进行配置
+UserDetailsService 用于管理 user  
+PasswordEncode 用于加密密码  
 
 ```java
 @Configuration
-public class ProjectConfig extends WebSecurityConfigurerAdapter {
-    
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.h
+public class SecurityConfig {
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+            .authorizeHttpRequests(auth -> auth
+                .anyRequest().authenticated()
+            )
+            .formLogin(withDefaults());
+
+        return http.build();
     }
-    
+
+    @Bean
+    public UserDetailsService userDetailsService() {
+        UserDetails user = User
+                .withUsername("user")
+                .password(passwordEncoder().encode("password"))
+                .roles("USER")
+                .build();
+
+        return new InMemoryUserDetailsManager(user);
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 }
 ```
 
+使用 h2 和 jpa 存储用户信息
 
+```yml
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ''
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
 ```
 
+
+自定义 User 和 UserDetailService
+
+
+```java
+public class MyUser {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long id;
+
+    @Column(name = "username", nullable = false, unique = true)
+    String username;
+
+    @Column(name = "password", nullable = false)
+    String password;
+
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "role")
+    private Set<String> roles;
+    
+}
+
+
+@Service
+@AllArgsConstructor
+public class MyUserDetailService implements UserDetailsService {
+
+    private MyUserRepository myUserRepository;
+
+    private PasswordEncoder passwordEncoder;
+    
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        MyUser user = myUserRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        List<GrantedAuthority> authorities = user.getRoles().stream()
+            .map(role -> (GrantedAuthority) new SimpleGrantedAuthority(role))
+            .toList();
+        return new User(user.getUsername(), user.getPassword(), authorities);
+    }
+
+    public void addUser(MyUser user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        myUserRepository.save(user);
+    }
+}
 ```
 
+启动会自动创建表
 
+```
+Hibernate: create table my_user (id bigint generated by default as identity, password varchar(255) not null, username varchar(255) not null, primary key (id))
+Hibernate: create table user_roles (user_id bigint not null, role varchar(255))
+Hibernate: alter table if exists my_user drop constraint if exists UKsfp0l65piri344cgr5yiugcd3
+Hibernate: alter table if exists my_user add constraint UKsfp0l65piri344cgr5yiugcd3 unique (username)
+Hibernate: alter table if exists user_roles add constraint FK9oewexa178ua52tkqsfuouoml foreign key (user_id) references my_user
+```
+
+方法鉴权
+
+配置类加上注解 @EnableMethodSecurity ，在需要鉴权方法上加上 @PreAuthorize 注解
+
+```java
+@RequestMapping("/user")
+@ResponseBody
+@PreAuthorize("hasAuthority('USER')")
+public String user() {
+    return "user";
+}
+
+@RequestMapping("/admin")
+@ResponseBody
+@PreAuthorize("hasAuthority('ADMIN')")
+public String admin() {
+    return "admin";
+}
+```
