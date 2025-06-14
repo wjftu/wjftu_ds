@@ -1,6 +1,6 @@
 ---
 title: 快速上手
-sidebar_position: 2
+sidebar_position: 1
 ---
 # 快速上手
 
