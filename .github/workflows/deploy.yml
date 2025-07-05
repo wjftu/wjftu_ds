@@ -18,11 +18,27 @@ jobs:
       - name: Build Docusaurus site
         run: |
           npm run build
-          
-      - name: Deploy
-        uses: wjftu/git_push_action@master
-        env:
-          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-          TARGET_REPO: wjftu/wjftu.github.io
-          TARGET_BRANCH: master
-          SOURCE_DIR: build
+
+      - name: Set up Git
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+
+      - name: Initialize Git and Force Push to gh-pages
+        run: |
+          cd build/
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git init
+          git remote add origin https://x-access-token:${{ secrets.ACCESS_TOKEN }}@github.com/wjftu/wjftu.github.io.git
+          git add .
+          git commit -m "update"
+          git push origin master --force
+
+      # - name: Deploy
+      #   uses: wjftu/git_push_action@master
+      #   env:
+      #     ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+      #     TARGET_REPO: wjftu/wjftu.github.io
+      #     TARGET_BRANCH: master
+      #     SOURCE_DIR: build
