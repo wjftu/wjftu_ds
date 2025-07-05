@@ -220,7 +220,7 @@ server:
 
 ```
 
-再次启动，可以发现配置生效，解析出来的 map 为：{server.servlet.context-path=/abc, server.port=8081}
+再次启动，可以发现配置生效，解析出来的 map 为：`{server.servlet.context-path=/abc, server.port=8081}`
 
 
 ### 控制反转
