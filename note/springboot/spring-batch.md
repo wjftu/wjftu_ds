@@ -154,13 +154,6 @@ BATCH
 
 从 csv 文件读取数据，并写入 PostgreSQL 数据库
 
-batch_job_instance
-batch_job_execution
-batch_job_execution_params
-batch_step_execution
-batch_step_execution_context
-batch_job_execution_context
-
 数据库实体类
 
 ```java
@@ -243,7 +236,7 @@ public class CsvBatchConfig {
     }
 ```
 
-设置 spring.batch.jdbc.initialize-schema 为 always ，它会自动创建 batch 框架用到的表，默认值为 never ，生产环境可以手动创建
+设置 spring.batch.jdbc.initialize-schema 为 always ，它会自动创建 batch 框架用到的表，默认值为 never ，生产环境建议手动创建
 
 ```yaml
 spring:
@@ -259,3 +252,24 @@ spring:
             initialize-schema: always
 ```
 
+batch 会创建这些表：  
+BATCH_JOB_INSTANCE  
+BATCH_JOB_EXECUTION  
+BATCH_JOB_EXECUTION_PARAMS  
+BATCH_STEP_EXECUTION  
+BATCH_STEP_EXECUTION_CONTEXT  
+BATCH_JOB_EXECUTION_CONTEXT  
+
+建表和删表语句在 spring-batch-core 的 org.springframework.batch.core 下，例如 postgre 为 schema-postgresql.sql 
+
+可以通过 table-prefix 配置前缀，配置后表原来的前缀会改变，例如 BATCH_JOB_INSTANCE 改为 PRE_JOB_INSTANCE 。注意配置前缀后自动建表不会用配置的前缀，需要关闭自动建表并手动创建
+
+```yml
+spring:
+  batch:
+    job:
+      enabled: true
+    jdbc:
+      initialize-schema: never
+      table-prefix: PRE_
+```

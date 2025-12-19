@@ -184,3 +184,253 @@ public String admin() {
     return "admin";
 }
 ```
+
+示例：一个基于 thymeleaf， jpa， h2， spring security 的登录应用
+
+```java
+
+
+@Controller
+public class AuthController {
+
+    private final UserService userService;
+
+    public AuthController(UserService userService) {
+        this.userService = userService;
+    }
+
+    @GetMapping("/login")
+    public String login(Model model) {
+        return "login";
+    }
+
+    @GetMapping("/register")
+    public String showRegistrationForm(Model model) {
+        model.addAttribute("user", new User());
+        return "register";
+    }
+
+    @PostMapping("/register")
+    public String registerUser(@Valid @ModelAttribute("user") User user,
+                               BindingResult result,
+                               Model model) {
+        if (result.hasErrors()) {
+            return "register";
+        }
+        if (userService.findByUsername(user.getUsername()).isPresent()) {
+            result.rejectValue("username", null, "Username already exists!");
+            return "register";
+        }
+
+        userService.registerNewUser(user);
+        return "redirect:/login?registered=true";
+    }
+
+}
+
+
+
+
+@Controller
+public class HomeController {
+
+    @GetMapping({"/", "/home"})
+    public String home() {
+        return "home";
+    }
+
+
+    @GetMapping("/dashboard")
+    public String dashboard(Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        model.addAttribute("username", authentication.getName());
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+        model.addAttribute("authorities", authorities);
+        model.addAttribute("roles", authorities.stream().map(a -> a.getAuthority()).toList());
+        return "dashboard";
+    }
+
+}
+
+
+@Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "roles")
+public class Role {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(unique = true, nullable = false)
+    private String name; // e.g., "ROLE_USER", "ROLE_ADMIN"
+
+    @ManyToMany(mappedBy = "roles")
+    private Set<User> users;
+
+    public Role(String name) {
+        this.name = name;
+    }
+}
+
+@Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "users")
+public class User {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @NotEmpty(message = "Username cannot be empty")
+    @Size(min = 3, max = 50, message = "Username must be between 3 and 50 characters")
+    @Column(unique = true, nullable = false)
+    private String username;
+
+    @NotEmpty(message = "Password cannot be empty")
+    @Size(min = 6, message = "Password must be at least 6 characters long")
+    @Column(nullable = false)
+    private String password; // Stored as hashed password
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(
+        name = "user_roles",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles = new HashSet<>();
+}
+
+
+@Service
+public class CustomUserDetailsService implements UserDetailsService {
+
+    private final UserRepository userRepository;
+
+    public CustomUserDetailsService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userRepository.findByUsername(username)
+            .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+
+        Set<GrantedAuthority> authorities = user.getRoles().stream()
+            .map(role -> new SimpleGrantedAuthority(role.getName()))
+            .collect(Collectors.toSet());
+
+        return new org.springframework.security.core.userdetails.User(
+            user.getUsername(),
+            user.getPassword(),
+            authorities
+        );
+    }
+}
+
+
+@Service
+public class UserService {
+
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    @Transactional
+    public User registerNewUser(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+
+        Role userRole = roleRepository.findByName("ROLE_USER")
+            .orElseThrow(() -> new RuntimeException("ROLE_USER not found. Please ensure roles are initialized."));
+
+        Set<Role> roles = new HashSet<>();
+        roles.add(userRole);
+        user.setRoles(roles);
+
+        return userRepository.save(user);
+    }
+
+    public Optional<User> findByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
+
+    public boolean hasRole(String roleName) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return false;
+        }
+        return authentication.getAuthorities().stream()
+            .anyMatch(a -> a.getAuthority().equals("ROLE_" + roleName.toUpperCase()));
+    }
+}
+
+
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig {
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+            .authorizeHttpRequests(authorize -> authorize
+                // Allow access to static resources (CSS, JS, images)
+                .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
+                // Allow access to the registration page
+                .requestMatchers("/register").permitAll()
+                // Allow access to the home page
+                .requestMatchers("/", "/home").permitAll()
+                // Require ADMIN role for paths starting with /admin/
+                .requestMatchers("/admin/**").hasRole("ADMIN")
+                // Require USER role for paths starting with /user/
+                .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN") // Admin can also access user pages
+                // All other requests require authentication
+                .anyRequest().authenticated()
+            )
+            .formLogin(form -> form
+                // Custom login page URL
+                .loginPage("/login")
+                // URL to submit the username and password
+                .loginProcessingUrl("/perform_login")
+                // Default success URL after successful login
+                .defaultSuccessUrl("/dashboard", true) // Redirect to /dashboard after login
+                // Failure URL after failed login
+                .failureUrl("/login?error=true")
+                // Allow everyone to access the login page
+                .permitAll()
+            )
+            .logout(logout -> logout
+                // URL to trigger logout
+                .logoutUrl("/logout")
+                // URL to redirect after successful logout
+                .logoutSuccessUrl("/login?logout=true")
+                // Invalidate HTTP session
+                .invalidateHttpSession(true)
+                // Clear authentication
+                .deleteCookies("JSESSIONID")
+                .permitAll()
+            );
+        return http.build();
+    }
+
+    /**
+     * Provides a BCryptPasswordEncoder bean for password hashing.
+     *
+     * @return A BCryptPasswordEncoder instance.
+     */
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+}
+```
